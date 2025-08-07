@@ -1,73 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daftar Buku</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body>
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 dark:text-white leading-tight">
+            {{ __('Daftar Buku') }}
+        </h2>
+    </x-slot>
+
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if(session('success'))
-                <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
-                    {{ session('success') }}
-                </div>
-            @endif
+            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-xl sm:rounded-lg p-6">
 
-            <div class="flex justify-end mb-4">
-                <a href="{{ route('buku.create') }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
-                    + Tambah Buku
-                </a>
-            </div>
+                {{-- Form Pencarian --}}
+                <form action="{{ route('buku.index') }}" method="GET" class="mb-6 flex flex-col md:flex-row md:items-center gap-3">
+                    <input type="text" name="search" placeholder="Cari buku..."
+                        value="{{ request('search') }}"
+                        class="w-full md:w-1/2 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-gray-700 dark:text-white dark:border-gray-600">
+                    <button type="submit"
+                        class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Cari</button>
+                </form>
 
-            <div class="bg-white shadow-md rounded p-4">
-                <table class="min-w-full">
-                    <thead>
-                        <tr>
-                            <th class="border px-4 py-2">Judul</th>
-                            <th class="border px-4 py-2">Penulis</th>
-                            <th class="border px-4 py-2">Penerbit</th>
-                            <th class="border px-4 py-2">Tahun</th>
-                            <th class="border px-4 py-2">Cover</th>
-                            <th class="border px-4 py-2">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($bukus as $buku)
-                        <tr>
-                            <td class="border px-4 py-2">{{ $buku->judul }}</td>
-                            <td class="border px-4 py-2">{{ $buku->penulis }}</td>
-                            <td class="border px-4 py-2">{{ $buku->penerbit }}</td>
-                            <td class="border px-4 py-2">{{ $buku->tahun_terbit }}</td>
-                            <td class="border px-4 py-2">
-                                @if($buku->cover)
-                                    <img src="{{ asset('storage/' . $buku->cover) }}" class="w-16">
-                                @else
-                                    <span>Tidak ada</span>
-                                @endif
-                            </td>
-                            <td class="border px-4 py-2 flex space-x-2">
-                                <a href="{{ route('buku.edit', $buku->id) }}" class="bg-yellow-500 text-white px-3 py-1 rounded">Edit</a>
-                                <form method="POST" action="{{ route('buku.destroy', $buku->id) }}">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" onclick="return confirm('Hapus buku ini?')" class="bg-red-600 text-white px-3 py-1 rounded">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                        @empty
-                        <tr>
-                            <td colspan="6" class="text-center">Tidak ada buku ditemukan.</td>
-                        </tr>
-                        @endforelse
-                    </tbody>
-                </table>
-                <div class="mt-4">
-                    {{ $bukus->links() }}
+                {{-- Tombol Tambah --}}
+                <div class="mb-4 text-right">
+                    <a href="{{ route('buku.create') }}"
+                        class="inline-block px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700">+ Tambah Buku</a>
                 </div>
+
+                {{-- Tabel Daftar Buku --}}
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white dark:bg-gray-700 rounded-lg shadow text-sm text-gray-800 dark:text-white">
+                        <thead class="bg-gray-200 dark:bg-gray-600">
+                            <tr>
+                                <th class="px-4 py-3 text-left">Judul</th>
+                                <th class="px-4 py-3 text-left">Penulis</th>
+                                <th class="px-4 py-3 text-left">Penerbit</th>
+                                <th class="px-4 py-3 text-left">Tahun</th>
+                                <th class="px-4 py-3 text-left">Cover</th>
+                                <th class="px-4 py-3 text-left">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($bukus as $buku)
+                                <tr class="border-t border-gray-300 dark:border-gray-600">
+                                    <td class="px-4 py-2">{{ $buku->judul }}</td>
+                                    <td class="px-4 py-2">{{ $buku->penulis }}</td>
+                                    <td class="px-4 py-2">{{ $buku->penerbit }}</td>
+                                    <td class="px-4 py-2">{{ $buku->tahun_terbit }}</td>
+                                    <td class="px-4 py-2">
+                                        @if ($buku->cover)
+                                            <img src="{{ asset('storage/' . $buku->cover) }}" alt="Cover Buku" class="h-20 rounded-md">
+                                        @else
+                                            <span class="text-gray-500 italic">Tidak ada</span>
+                                        @endif
+                                    </td>
+                                    <td class="px-4 py-2 flex gap-2">
+                                        <a href="{{ route('buku.edit', $buku->id) }}"
+                                            class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">Edit</a>
+                                        <form action="{{ route('buku.destroy', $buku->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700">Hapus</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="6" class="text-center px-4 py-4 text-gray-500">Tidak ada data buku</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+
+                {{-- Pagination --}}
+                <div class="mt-6">
+                    {{ $bukus->appends(['search' => request('search')])->links() }}
+                </div>
+
             </div>
         </div>
     </div>
-</body>
-</html>
+</x-app-layout>

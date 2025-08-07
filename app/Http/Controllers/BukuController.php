@@ -11,11 +11,20 @@ class BukuController extends Controller
     /**
      * Menampilkan daftar semua buku.
      */
-    public function index()
-    {
-        $bukus = Buku::latest()->paginate(10);
-        return view('buku.index', compact('bukus'));
-    }
+   public function index(Request $request)
+{
+    $search = $request->input('search');
+
+    $bukus = Buku::when($search, function ($query, $search) {
+        return $query->where('judul', 'like', '%' . $search . '%')
+                     ->orWhere('penulis', 'like', '%' . $search . '%')
+                     ->orWhere('penerbit', 'like', '%' . $search . '%');
+    })->paginate(5); // pastikan menggunakan paginate, bukan get()
+
+    return view('buku.index', compact('bukus'));
+}
+
+
 
     /**
      * Menampilkan formulir untuk membuat buku baru.
@@ -109,4 +118,5 @@ class BukuController extends Controller
         return redirect()->route('buku.index')
                          ->with('success', 'Buku berhasil dihapus!');
     }
+    
 }

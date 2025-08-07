@@ -1,23 +1,21 @@
 <?php
 
-namespace Database\Seeders; // Pastikan namespace ini benar
+namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use App\Models\Buku; 
+use App\Models\Buku;
 
-class BukuSeeder extends Seeder // Pastikan nama class ini benar
+class BukuSeeder extends Seeder
 {
     /**
      * Jalankan database seeds.
      */
     public function run(): void
     {
-        // Hapus semua data yang ada di tabel 'buku' sebelum menambahkan yang baru.
-        // Ini opsional, tapi berguna jika Anda ingin memulai dari awal setiap kali seeder dijalankan.
-        // Buku::truncate(); 
+        // Hapus semua data di tabel buku
+        Buku::truncate();
 
-        // Tambahkan data buku dummy
+        // Tambahkan kembali 4 data awal
         Buku::create([
             'judul' => 'Kisah Tanah Jawa',
             'penulis' => 'Tim Kisah Tanah Jawa',
@@ -31,7 +29,7 @@ class BukuSeeder extends Seeder // Pastikan nama class ini benar
             'penerbit' => 'Falcon Publishing',
             'tahun_terbit' => 2017,
         ]);
-        
+
         Buku::create([
             'judul' => 'Laskar Pelangi',
             'penulis' => 'Andrea Hirata',
